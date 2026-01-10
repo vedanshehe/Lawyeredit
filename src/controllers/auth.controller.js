@@ -1,3 +1,4 @@
+const debate = [];
 const { signToken } = require("../utils/jwt");  
 const bcrypt = require("bcrypt");
 
