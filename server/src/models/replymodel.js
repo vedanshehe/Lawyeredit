@@ -19,7 +19,8 @@ const replySchema =new mongoose.Schema({
     },
     parentReply:{
         type: mongoose.Schema.ObjectId,
-        ref: 'Reply'
+        ref: 'Reply',
+        default: null
 },
 }, {timestamps:true});
 

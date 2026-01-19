@@ -1,18 +1,19 @@
 import Post from "../models/postmodel.js";
+import checkOwnership from "../utils/ownership.js";
 
 // create post logic
 export const createPost = async (req, res, next) => {
   try {
-    const { title, content } = req.body;
+    const { title, body } = req.body;
     const author = req.user._id;
 
-    if (!title || !content) {
+    if (!title || !body) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
     const post = await Post.create({
       title,
-      content,
+      body,
       author
     });
 
@@ -26,14 +27,21 @@ export const createPost = async (req, res, next) => {
 };
 
 // GET ALL POSTS 
-export const getAllPosts = async (req, res, next) => {
+export const getPosts = async (req, res, next) => {
   try {
-    const posts = await Post.find()
-      .populate("author", "username email")
-      .sort({ createdAt: -1 });
+    const page = Number(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
 
-    res.status(200).json({
+    const posts = await Post.find()
+      .populate("author", "username")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.json({
       success: true,
+      page,
       count: posts.length,
       data: posts
     });
@@ -56,6 +64,31 @@ export const getPostById = async (req, res, next) => {
       success: true,
       data: post
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//delete a post
+export const deletePost = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      const err = new Error("Post not found");
+      err.statusCode = 404;
+      throw err;
+    }
+
+    if (!checkOwnership(post.author, req.user._id)) {
+      const err = new Error("Not authorized");
+      err.statusCode = 403;
+      throw err;
+    }
+
+    await post.deleteOne();
+
+    res.json({ success: true });
   } catch (error) {
     next(error);
   }

@@ -1,4 +1,5 @@
 import Reply from "../models/replymodel.js";
+import buildReplyTree from "../utils/replythreads.js";
 
 export const createReply = async (req, res, next) => {
   try {
@@ -31,13 +32,13 @@ const author = req.user._id;
 //get replies for a post
 export const getRepliesForPost = async (req, res, next) => {
   try {
-    const { postId } = req.params;
-    const replies = await Reply.find({ post: postId })
-      .populate("author", "username email")
+    const replies = await Reply.find({ post: req.params.postId })
+      .populate("author", "username")
       .sort({ createdAt: 1 });
-    res.status(200).json({
+
+    res.json({
       success: true,
-      data: replies
+      data: buildReplyTree(replies)
     });
   } catch (error) {
     next(error);
