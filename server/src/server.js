@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { connect } from 'mongoose';
+// import { connect } from 'mongoose';
 import connectDB from './config/db.js';
 import postRoutes from './routes/postRoutes.js';
 import replyRoutes from './routes/replyRoutes.js';

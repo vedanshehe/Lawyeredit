@@ -3,9 +3,9 @@ import buildReplyTree from "../utils/replythreads.js";
 
 export const createReply = async (req, res, next) => {
   try {
-    const { title, body } = req.body;
+    const { content, post, parentReply } = req.body;
 const author = req.user._id;
-
+    
 
     if (!content || !author || !post) {
       return res.status(400).json({
