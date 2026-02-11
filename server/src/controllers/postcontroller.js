@@ -26,7 +26,7 @@ export const createPost = async (req, res, next) => {
   }
 };
 
-// GET ALL POSTS 
+// get all the posts 
 export const getPosts = async (req, res, next) => {
   try {
     const page = Number(req.query.page) || 1;
@@ -50,7 +50,7 @@ export const getPosts = async (req, res, next) => {
   }
 };
 
-// GET SINGLE POST (public)
+// for gettig single posts
 export const getPostById = async (req, res, next) => {
   try {
     const post = await Post.findById(req.params.id)
